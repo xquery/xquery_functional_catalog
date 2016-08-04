@@ -1,3 +1,2 @@
-# xquery_functional_catalog
-
-balisage 2016 talk
+Functional Idiom catalog for xquery 3.0 
+presented at Balisage 2016

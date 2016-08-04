@@ -1,0 +1,98 @@
+<export><workspace name="Workspace 2"><query name="factorial1" focus="true" listorder="1" taborder="1" active="true" database="14643736467830454204" server="1715478708822357016" database-name="Meters" server-name="App-Services" mode="xquery">xquery version "1.0-ml";
+
+(: memoize :)
+
+declare variable $cache := map:map();
+
+declare function local:factorial($n as xs:integer) as xs:integer {
+    if ($n &lt; 0)
+    then 0
+    else
+        if ($n = 0)
+        then 1
+        else $n * local:factorial($n - 1)
+};
+
+
+let $a := local:factorial(1)
+let $b := local:factorial(3)
+let $c := local:factorial(5)
+let $d := local:factorial(10)
+let $e := local:factorial(12)
+let $f := local:factorial(15)
+let $g := local:factorial(20)
+
+return $g</query><query name="memoize" focus="false" listorder="2" taborder="2" active="true" database="14643736467830454204" server="1715478708822357016" database-name="Meters" server-name="App-Services" mode="xquery">xquery version "1.0-ml";
+
+(: memoize :)
+
+declare variable $cache := map:map();
+
+declare function local:factorial($n as xs:integer) as xs:integer {
+    if ($n &lt; 0)
+    then 0
+    else
+        if ($n = 0)
+        then 1
+        else if(map:get($cache,"func"|| $n) )
+             then map:get($cache,"func"|| $n)
+             else $n * local:factorial($n - 1)
+};
+
+let $memoizeFunc := function ($func, $var) {
+    let $key := concat("func", string($var))
+    return
+        if (map:get($cache, $key)) 
+        then map:get($cache, $key)
+        else
+            let $result := $func($var)
+            return (map:put($cache, $key, $result), $result)
+}
+
+let $factorial := local:factorial#1
+
+let $a := $memoizeFunc($factorial, 1)
+let $b := $memoizeFunc($factorial, 3)
+let $c := $memoizeFunc($factorial, 5)
+let $d := $memoizeFunc($factorial, 10)
+let $e := $memoizeFunc($factorial, 12)
+let $f := $memoizeFunc($factorial, 15)
+let $g := $memoizeFunc($factorial, 20)
+
+return $g</query><query name="memoize2a" focus="false" listorder="3" taborder="3" active="true" database="14643736467830454204" server="1715478708822357016" database-name="Meters" server-name="App-Services" mode="xquery">xquery version "1.0-ml";
+
+(: memoize :)
+
+declare variable $cache := map:map();
+
+declare function local:factorial($n as xs:integer) as xs:integer {
+    if ($n &lt; 0)
+    then 0
+    else
+        if ($n = 0)
+        then 1
+        else $n * local:factorial($n - 1)
+};
+
+let $memoizeFunc := function ($func, $var) {
+    let $key := concat("func", string($var))
+    return
+        if ( map:get($cache, $key) ) 
+        then map:get($cache, $key)
+        else
+            let $result := $func($var)
+            return (map:put($cache, $key, $result), 
+                    $result)
+}
+
+let $factorial := local:factorial#1
+
+let $a := $memoizeFunc($factorial, 20)
+let $b := $memoizeFunc($factorial, 15)
+let $c := $memoizeFunc($factorial, 12)
+let $d := $memoizeFunc($factorial, 10)
+let $e := $memoizeFunc($factorial, 5)
+let $f := $memoizeFunc($factorial, 3)
+let $g := $memoizeFunc($factorial, 1)
+
+return $g</query></workspace></export>
